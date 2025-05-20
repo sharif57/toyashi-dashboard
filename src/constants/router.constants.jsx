@@ -35,9 +35,9 @@ export const dashboardItems = [
     element: <DashboardHome />,
   },
   {
-    name: "Host Request",
+    name: "Request",
     path: "/host-request",
-    icon: TbUserQuestion     ,
+    icon: TbUserQuestion,
     element: <HostRequest />,
   },
   {
