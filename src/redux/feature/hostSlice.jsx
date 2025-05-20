@@ -34,6 +34,28 @@ export const hostApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Host"],
     }),
+
+    requestApproval: builder.mutation({
+      query: (id) => ({
+        url: `/user/host-request-approve/${id}`,
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }),
+      invalidatesTags: ["Host"],
+    }),
+
+    requestReject: builder.mutation({
+      query: (id) => ({
+        url: `/user/host-request-reject/${id}`,
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }),
+      invalidatesTags: ["Host"],
+    }),
   }),
 });
 
@@ -41,4 +63,6 @@ export const {
   useAllHostRequestQuery,
   useAllHostQuery,
   useAllRejectedHostQuery,
+  useRequestApprovalMutation,
+  useRequestRejectMutation,
 } = hostApi;
