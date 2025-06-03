@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../redux/feature/authSlice";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -18,11 +19,13 @@ export default function SignIn() {
     try {
       const response = await login({ email, password }).unwrap();
       console.log("Login successful:", response);
+      toast.success(response?.message || "Login successful");
       localStorage.setItem("accessToken", response?.data?.accessToken);
       navigate("/");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       console.log("Login attempt with:", { email, password, rememberMe });
     } catch (error) {
+      toast.error(error?.message || "Login failed");
       console.error("Login failed:", error);
     } finally {
       setIsLoading(false);
@@ -42,17 +45,7 @@ export default function SignIn() {
       <div className="w-full md:w-1/2 bg-[#FFF0F0] flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-sm p-8 max-w-md w-full">
           <div className="mb-6 flex items-center justify-center">
-            {/* <Link to="/" className="text-gray-600 hover:text-gray-800">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 inline mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </Link> */}
+          
             <h1 className="text-[30px] font-bold">Sign In</h1>
           </div>
 
