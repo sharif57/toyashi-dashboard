@@ -26,6 +26,7 @@ import Parties from "../pages/Main/Parties/Parties";
 import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import Notifications from "../pages/Main/Notifications/Notifications";
 import HostRequest from "../pages/Main/HostRequest/HostRequest";
+import EditItem from "../pages/Main/Shop/EditItem";
 
 export const dashboardItems = [
   {
@@ -49,6 +50,12 @@ export const dashboardItems = [
   {
     path: "add-item",
     element: <AddItem />,
+  },
+  {
+    path:'shop/:id',
+    element:<EditItem></EditItem>,
+    loader: ({ params }) =>
+			fetch(`http://192.168.10.233:3011/api/v1/shop/product-details/${params.id}`),
   },
 
   {

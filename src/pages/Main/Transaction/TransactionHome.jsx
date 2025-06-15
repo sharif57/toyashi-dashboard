@@ -1,6 +1,13 @@
+import { useAllPartyQuery } from "../../../redux/feature/partySlice";
+import { useAllUsersQuery } from "../../../redux/feature/userSlice";
 import Transaction from "./Transaction";
 
 export default function TransactionHome() {
+   const { data } = useAllUsersQuery({ page: 1, limit: 10 });
+     const { data: allParties } = useAllPartyQuery({
+      page: 1,
+      limit: 10,
+    });
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-32  gap-y-10 ">
@@ -10,7 +17,7 @@ export default function TransactionHome() {
           </div>
           <div className="text-center">
             <h3 className="text-[20px]">{"Total users"}</h3>
-            <h3 className="text-[30px] font-extralight">40,689 </h3>
+            <h3 className="text-[30px] font-extralight">{data?.data?.totalData}</h3>
           </div>
         </div>
 
@@ -20,7 +27,7 @@ export default function TransactionHome() {
           </div>
           <div className="text-center">
             <h3 className="text-[20px]">{"Total Party"}</h3>
-            <h3 className="text-[30px] font-extralight">145</h3>
+            <h3 className="text-[30px] font-extralight">{allParties?.data?.meta?.totalData}</h3>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import profileImage from "../../assets/images/dash-profile.png";
 import { TbBellRinging } from "react-icons/tb";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { Select } from 'antd';
+import { useUserProfileQuery } from "../../redux/feature/userSlice";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const Header = () => {
   const [notificationPopup, setNotificationPopup] = useState(false);
   console.log(notificationPopup)
 
+const {data} =useUserProfileQuery()
+console.log(data)
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
@@ -43,7 +46,7 @@ const Header = () => {
     <div className="w-full h-[88px] flex justify-between items-center rounded-lg py-[16px] px-[32px] shadow-lg bg-white border border-[#E73E1E]">
       <div className="text-start space-y-0.5">
         <p className="text-sm md:text-xl font-light">
-          {"Welcome, Jane Cooper"}
+          {`Welcome, ${data?.data?.name}` }
         </p>
         <p className="text-sm md:text-xl">{"Have a nice day!"}</p>
       </div>

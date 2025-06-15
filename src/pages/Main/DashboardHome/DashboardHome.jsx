@@ -1,55 +1,20 @@
-// import DashboardHomeTable from "../../../Components/DashboardHomeTable";
 
-// const DashboardHome = () => {
-//   return (
-//     <div className="space-y-[24px]">
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-32   gap-y-10 ">
-//         <div className=" flex items-center justify-center gap-6 rounded-lg bg-white  ">
-//           <div className="bg-[#FAE9E6] p-6 rounded-2xl">
-//             <img src="/users.png" alt="" />
-//           </div>
-//           <div className="text-center">
-//             <h3 className="text-[20px]">{"Total users"}</h3>
-//             <h3 className="text-[30px] font-extralight">40,689 </h3>
-//           </div>
-//         </div>
-//         <div className=" flex items-center justify-center gap-6 rounded-lg bg-white  ">
-//           <div className="bg-[#FAE9E6] p-6 rounded-2xl">
-//             <img src="/crown-03.png" alt="" />
-//           </div>
-//           <div className="text-center">
-//             <h3 className="text-[20px]">{"Total Host"}</h3>
-//             <h3 className="text-[30px] font-extralight">500 </h3>
-//           </div>
-//         </div>
-
-//         <div className="flex items-center justify-center gap-6 px-[24px]  py-[20px] rounded-lg space-y-3 bg-white w-96 md:w-full">
-//           <div className="bg-[#FAE9E6] p-6 rounded-2xl">
-//             <img src="/party.png" alt="" />
-//           </div>
-//           <div className="text-center">
-//             <h3 className="text-[20px]">{"Total Party"}</h3>
-//             <h3 className="text-[30px] font-extralight">145</h3>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* <BarChartComponent /> */}
-//       <DashboardHomeTable />
-//     </div>
-//   );
-// };
-
-// export default DashboardHome;
 
 import { useState } from "react";
 import DashboardHomeTable from "../../../Components/DashboardHomeTable";
 import HostsTable from "../../../Components/HostsTable";
 import { Link } from "react-router-dom";
+import { useAllUsersQuery } from "../../../redux/feature/userSlice";
+import { useAllPartyQuery } from "../../../redux/feature/partySlice";
 
 const DashboardHome = () => {
   const [activeTable, setActiveTable] = useState("users"); // 'users' or 'hosts'
-
+  const { data } = useAllUsersQuery({ page: 1, limit: 10 });
+   const { data: allParties } = useAllPartyQuery({
+    page: 1,
+    limit: 10,
+  });
+  console.log(allParties?.data?.meta?.totalData, 'dksfja')
   return (
     <div className="space-y-6">
       {/* Stats Cards Grid */}
@@ -66,7 +31,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-lg text-gray-600">Total Users</h3>
-            <p className="text-3xl font-light">40,689</p>
+            <p className="text-3xl font-light">{data?.data?.totalData}</p>
           </div>
         </div>
 
@@ -96,7 +61,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-lg text-gray-600">Total Party</h3>
-            <p className="text-3xl font-light">145</p>
+            <p className="text-3xl font-light">{allParties?.data?.meta?.totalData}</p>
           </div>
         </Link>
       </div>

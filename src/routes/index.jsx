@@ -9,11 +9,12 @@ import VerifyEmail from "../pages/Auth/VerifyEmail";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import ChatPage from "../pages/Main/Support/ChatPage";
 import ChangePassword from "../pages/Main/Setting/Change-password/ChangePassword";
+import AdminRoutes from "../constants/AdminRoutes";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Main />,
+    element: <AdminRoutes><Main /></AdminRoutes>,
     children: routesGenerators(dashboardItems),
   },
   {
