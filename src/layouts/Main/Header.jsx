@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import profileImage from "../../assets/images/dash-profile.png";
 import { TbBellRinging } from "react-icons/tb";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { Select } from 'antd';
+
 import { useUserProfileQuery } from "../../redux/feature/userSlice";
 
 const Header = () => {
@@ -41,6 +40,9 @@ console.log(data)
     setNotificationPopup(false);
   }, [loacatin.pathname]);
 
+    const IMAGE = import.meta.env.VITE_IMAGE_API;
+
+
   return (
 
     <div className="w-full h-[88px] flex justify-between items-center rounded-lg py-[16px] px-[32px] shadow-lg bg-white border border-[#E73E1E]">
@@ -62,30 +64,13 @@ console.log(data)
             />
           </Badge>
         </div>
-        <div className="flex items-center">
-          <div>
-            <img src={profileImage} alt="" className="rounded-full h-[42px] w-[42px]" />
+        <Link to="/settings" className="flex items-center">
+          <div className="flex items-center gap-2">
+            <img src={`${IMAGE}/${data?.data?.image}` ||profileImage} alt="" className="rounded-full h-[42px] w-[42px]" />
+            <h1>{data?.data?.name}</h1>
           </div>
-          <Select
-            defaultValue="Jane Cooper"
-            style={{
-              width: 120,
-            }}
-            bordered={false}
-            suffixIcon={<MdOutlineKeyboardArrowDown color="black" fontSize={20} />}
-            onChange={handleChange}
-            options={[
-              {
-                value: 'Jane Cooper',
-                label: 'Jane Cooper',
-              },
-              {
-                value: 'lucy',
-                label: 'Lucy',
-              }
-            ]}
-          />
-        </div>
+      
+        </Link>
       </div>
     </div>
   );

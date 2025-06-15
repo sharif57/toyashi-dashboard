@@ -3,10 +3,32 @@ import exlamIcon from "../assets/images/exclamation-circle.png";
 import { useState } from "react";
 import DashboardModal from "./DashboardModal";
 import { Search } from "lucide-react";
+import { useTotalHostQuery } from "../redux/feature/userSlice";
+import { format } from "date-fns"; // For date formatting
 
 const HostsTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const pageSize = 10; // Matches API default limit
+
+  // Fetch hosts with pagination
+  const { data: hostsResponse, isLoading } = useTotalHostQuery({
+    page: currentPage,
+    limit: pageSize,
+  });
+
+  // Extract hosts and pagination meta
+  const hosts = hostsResponse?.data?.result || [];
+  // const totalPages = hostsResponse?.data?.meta?.totalPage || 1;
+  const totalItems = hostsResponse?.data?.meta?.total || 0;
+
+  // Filter data based on search term
+  const filteredHosts = hosts.filter((host) =>
+    host.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    host.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const showModal = (data) => {
     setIsModalOpen(true);
@@ -16,36 +38,38 @@ const HostsTable = () => {
   const columns = [
     {
       title: "#SI",
-      dataIndex: "transIs",
-      key: "transIs",
-      render: (text) => <a>{text}</a>,
+      dataIndex: "_id",
+      key: "_id",
+      render: (text, record, index) => (currentPage - 1) * pageSize + index + 1,
     },
     {
       title: "User Name",
       dataIndex: "name",
       key: "name",
+      render: (text) => text || "N/A",
     },
     {
       title: "Email",
-      dataIndex: "Email",
-      key: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => text || "N/A",
     },
-    {
-      title: "Subscription",
-      key: "subscription",
-      dataIndex: "subscription",
-    },
+    // {
+    //   title: "Subscription",
+    //   key: "subscription",
+    //   dataIndex: "subscription",
+    //   render: () => "N/A", // Placeholder; update if subscription data is available
+    // },
     {
       title: "Action",
       key: "Review",
-      aligen: "center",
+      align: "center",
       render: (_, data) => (
-        <div className="  items-center justify-around textcenter flex ">
-          {/* Review Icon */}
+        <div className="flex items-center justify-center">
           <img
             src={exlamIcon}
-            alt=""
-            className="btn  px-3 py-1 text-sm rounded-full cursor-pointer"
+            alt="Review"
+            className="px-3 py-1 text-sm rounded-full cursor-pointer"
             onClick={() => showModal(data)}
           />
         </div>
@@ -53,18 +77,16 @@ const HostsTable = () => {
     },
   ];
 
-  const data = [];
-  for (let index = 0; index < 6; index++) {
-    data.push({
-      transIs: `${index + 1}`,
-      name: "Henry",
-      Email: "sharif@gmail.com",
-      subscription: "monthly",
-      Review: "See Review",
-      date: "16 Apr 2024",
-      _id: index,
-    });
-  }
+  // Map filtered API data to table dataSource
+  const dataSource = filteredHosts.map((host) => ({
+    key: host._id,
+    _id: host._id,
+    name: host.name,
+    email: host.email,
+    subscription: host.subscription, // Placeholder; update if available
+    phone: host.phone || "N/A",
+    createdAt: host.createdAt,
+  }));
 
   return (
     <div className="rounded-lg border py-4 bg-white mt-8 recent-users-table">
@@ -75,15 +97,28 @@ const HostsTable = () => {
             type="text"
             placeholder="User Name"
             className="border border-[#999999] bg-[#fdece9] px-4 rounded-lg py-2"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Search className="bg-[#E73E1E] text-white p-2 size-10 rounded-full"/> 
-          </div>
+          <Search
+            className="bg-[#E73E1E] text-white p-2 size-10 rounded-full cursor-pointer"
+            onClick={() => setSearchTerm(searchTerm)} // Optional: Trigger search on icon click
+          />
+        </div>
       </div>
       {/* Ant Design Table */}
       <Table
         columns={columns}
-        dataSource={data}
-        pagination={{ position: ["bottomCenter"] }}
+        dataSource={dataSource}
+        loading={isLoading}
+        pagination={{
+          position: ["bottomCenter"],
+          current: currentPage,
+          pageSize: pageSize,
+          total: totalItems,
+          onChange: (page) => setCurrentPage(page),
+          showSizeChanger: false, // Disable page size changer for simplicity
+        }}
         className="rounded-lg"
       />
       <DashboardModal
@@ -95,35 +130,47 @@ const HostsTable = () => {
           <h2 className="text-lg text-center mb-4">User Details</h2>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>#SL</p>
-            <p>{modalData.transIs}</p>
+            <p>
+              {(currentPage - 1) * pageSize +
+                dataSource.findIndex((d) => d._id === modalData._id) +
+                1 || "N/A"}
+            </p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>User Name</p>
-            <p>{modalData.name}</p>
+            <p>{modalData.name || "N/A"}</p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Email</p>
-            <p>{modalData.Email}</p>
+            <p>{modalData.email || "N/A"}</p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Mobile Phone</p>
-            <p>{modalData.Phone}</p>
+            <p>{modalData.phone || "N/A"}</p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Service</p>
-            <p>{modalData.transIs}</p>
+            <p>Hosting</p> {/* Placeholder; update if specific service data is available */}
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Date</p>
-            <p>{modalData.transIs}</p>
+            <p>
+              {modalData.createdAt
+                ? format(new Date(modalData.createdAt), "dd MMM yyyy")
+                : "N/A"}
+            </p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Time</p>
-            <p>{modalData.transIs}</p>
+            <p>
+              {modalData.createdAt
+                ? format(new Date(modalData.createdAt), "hh:mm a")
+                : "N/A"}
+            </p>
           </div>
           <div className="flex justify-between mb-2 text-gray-600">
             <p>Amount</p>
-            <p>{modalData.transIs}</p>
+            <p>N/A</p> {/* Placeholder; update if amount data is available */}
           </div>
         </div>
       </DashboardModal>

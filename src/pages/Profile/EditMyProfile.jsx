@@ -1,115 +1,158 @@
-import React, { useState } from "react";
-import { Button, Form, Input } from "antd";
+import  { useState, useEffect } from "react";
+import { Button, Form, Input, message } from "antd";
 import dashProfile from "../../assets/images/dashboard-profile.png";
-// import "react-phone-number-input/style.css";
-// import PhoneInput from "react-phone-number-input";
-import { FiEdit } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import PhoneCountryInput from "../../Components/PhoneCountryInput";
-import PageHeading from "../../Components/PageHeading";
-import { PiCameraPlus } from "react-icons/pi";
 import { FaAngleLeft } from "react-icons/fa6";
+import { PiCameraPlus } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import { useUpdateProfileMutation, useUserProfileQuery } from "../../redux/feature/userSlice";
 
 const EditMyProfile = () => {
-  const [code, setCode] = useState();
+  const [form] = Form.useForm();
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const { data: profileResponse, isLoading } = useUserProfileQuery();
+  const [updateProfile] = useUpdateProfileMutation();
+  const IMAGE = import.meta.env.VITE_IMAGE_API;
+
+  const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+
+  // Prefill form with profile data
+  useEffect(() => {
+    if (profileResponse?.data) {
+      const { email, image, name = email?.split("@")[0] || name, phone = "+880 150597212" } = profileResponse.data;
+      form.setFieldsValue({ name, email, phone });
+      setImagePreview(image ? `${IMAGE}${image}` : dashProfile);
+    }
+  }, [profileResponse, form, IMAGE]);
+
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify({ phone: values.phone , name: values.name, }));
+    if (imageFile) formData.append("image", imageFile);
+
+    try {
+    const response =  await updateProfile(formData).unwrap();
+      message.success("Phone number updated successfully!");
+      // navigate(-1);
+      window.location.href = "/settings/profile";
+    } catch (error) {
+      message.error("Failed to update phone number. Please try again.");
+    }
   };
+
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.log("Form failed:", errorInfo);
   };
-  const profileData = {
-    name: "Jane Kooper",
-    email: "enrique@gmail.com",
-    phone: "+880 150597212",
-    profile: dashProfile,
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
-  // console.log(code);
+
+  if (isLoading) {
+    return <div className="p-4 text-center">Loading profile...</div>;
+  }
 
   return (
-    <>
-      <div className="flex items-center gap-2 text-xl">
-        <FaAngleLeft />
-        <h1>Personal information</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
+      <div className="flex items-center gap-4 mb-6">
+        <FaAngleLeft className="text-xl cursor-pointer" onClick={() => navigate(-1)} />
+        <h1 className="text-2xl font-semibold">Edit Personal Information</h1>
       </div>
-      <div className="rounded-lg py-4 border-lightGray border-2 shadow-lg mt-8 bg-white">
-        <div className="space-y-[24px] min-h-[83vh] bg-light-gray rounded-2xl">
-          <h3 className="text-2xl text-black mb-4 pl-5 border-b-2 border-lightGray/40 pb-3">
-            Personal information
-          </h3>
-          <div className="w-full">
-            <Form
-              name="basic"
-              layout="vertical"
-              className="w-full grid grid-cols-12 gap-x-10 px-14 py-8"
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-              initialValues={{
-                name: profileData.name,
-                email: profileData.email,
-              }}
+
+      <Form
+        form={form}
+        name="editProfile"
+        layout="vertical"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        className="space-y-6"
+      >
+        {/* Profile Image Section */}
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <img
+              src={imagePreview}
+              alt="Profile"
+              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+            />
+            <label
+              htmlFor="image-upload"
+              className="absolute bottom-2 right-2 bg-blue-600 text-white rounded-full p-2 cursor-pointer hover:bg-blue-700"
             >
-              <div className="col-span-3 space-y-6 ">
-                <div className="min-h-[300px] flex flex-col items-center justify-center p-8 border border-black bg-lightGray/15">
-                  <div className="my-2">
-                    <img
-                      src={dashProfile}
-                      alt=""
-                      className="h-28 w-28 rounded-full border-4 border-black"
-                    />
-                  </div>
-                  <h5 className="text-lg text-[#222222]">{"Profile"}</h5>
-                  <h4 className="text-2xl text-[#222222]">{"Admin"}</h4>
-                </div>
-              </div>
-              <div className="col-span-9 space-y-[14px] w-full">
-                <Form.Item
-                  className="text-lg  font-medium text-black -mb-1"
-                  label="Name"
-                  name="name"
-                >
-                  <Input
-                    readOnly
-                    size="large"
-                    className="h-[53px] rounded-lg"
-                  />
-                </Form.Item>
-                <Form.Item
-                  className="text-lg  font-medium text-black"
-                  label="Email"
-                  name="email"
-                >
-                  <Input
-                    readOnly
-                    size="large"
-                    className="h-[53px] rounded-lg"
-                  />
-                </Form.Item>
-                <Form.Item
-                  className="text-lg text-[#222222] font-medium"
-                  label="Phone Number"
-                  name="phone"
-                >
-                  <PhoneCountryInput />
-                </Form.Item>
-                <Form.Item className="flex justify-end pt-4">
-                  <Button
-                    // onClick={(e) => navigate(`edit`)}
-                    size="large"
-                    type="primary"
-                    className="px-8 bg-black text-white hover:bg-black/90 rounded-full font-semibold"
-                  >
-                    Save Changes
-                  </Button>
-                </Form.Item>
-              </div>
-            </Form>
+              <PiCameraPlus />
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
           </div>
         </div>
-      </div>
-    </>
+
+        {/* Form Fields */}
+        <div className="space-y-4">
+          <Form.Item
+            label="Name"
+            name="name"
+            className="text-lg font-medium"
+          >
+            <Input
+              // readOnly
+              size="large"
+              className="w-full rounded-lg"
+              value={profileResponse?.data?.name || profileResponse?.data?.email?.split("@")[0] || "User"}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            className="text-lg font-medium"
+          >
+            <Input
+              readOnly
+              size="large"
+              className="w-full rounded-lg"
+              value={profileResponse?.data?.email || "N/A"}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Phone Number"
+            name="phone"
+            rules={[
+              { required: true, message: "Please input your phone number!" },
+              { pattern: /^\+\d{10,}$/, message: "Phone number must start with + and be at least 10 digits!" },
+            ]}
+            className="text-lg font-medium"
+          >
+            <Input
+              size="large"
+              className="w-full rounded-lg"
+              placeholder="+1234567890"
+            />
+          </Form.Item>
+        </div>
+
+        {/* Save Button */}
+        <Form.Item className="text-right">
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            className="bg-blue-600 text-white hover:bg-blue-700 rounded-lg px-6"
+          >
+            Save Changes
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

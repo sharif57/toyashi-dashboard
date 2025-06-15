@@ -4,7 +4,7 @@ import { useState } from "react";
 import DashboardHomeTable from "../../../Components/DashboardHomeTable";
 import HostsTable from "../../../Components/HostsTable";
 import { Link } from "react-router-dom";
-import { useAllUsersQuery } from "../../../redux/feature/userSlice";
+import { useAllUsersQuery, useTotalHostQuery } from "../../../redux/feature/userSlice";
 import { useAllPartyQuery } from "../../../redux/feature/partySlice";
 
 const DashboardHome = () => {
@@ -14,7 +14,10 @@ const DashboardHome = () => {
     page: 1,
     limit: 10,
   });
-  console.log(allParties?.data?.meta?.totalData, 'dksfja')
+
+  const {data:hosts}= useTotalHostQuery({page:1,limit:10})
+  console.log(hosts?.data?.meta?.total)
+
   return (
     <div className="space-y-6">
       {/* Stats Cards Grid */}
@@ -47,7 +50,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-lg text-gray-600">Total Host</h3>
-            <p className="text-3xl font-light">500</p>
+            <p className="text-3xl font-light">{hosts?.data?.meta?.total}</p>
           </div>
         </div>
 
