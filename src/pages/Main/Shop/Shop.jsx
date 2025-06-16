@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Button, Card, Pagination, Typography } from "antd";
-import { StarFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Card, Typography } from "antd";
+import { StarFilled } from "@ant-design/icons";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -12,17 +11,14 @@ import Swal from "sweetalert2";
 const { Title, Text } = Typography;
 
 export default function ProductListing() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  
 
-  const [priceFilter, setPriceFilter] = useState(200); // Adjusted to accommodate API prices
   const {
     data: shopData,
     isLoading,
     refetch,
   } = useAllShopsQuery({
-    page: currentPage,
-    limit: pageSize,
+ 
   });
   const [deleteProducts] = useDeleteProductsMutation();
 
@@ -32,8 +28,8 @@ export default function ProductListing() {
   const categories = [
     ...new Map(
       shopData?.data?.map((item) => [
-        item.category._id,
-        { id: item.category._id, name: item.category.categoryName },
+        item?.category?._id,
+        { id: item?.category?._id, name: item?.category?.categoryName },
       ])
     ).values(),
   ];
@@ -41,17 +37,17 @@ export default function ProductListing() {
   // Transform API data into product format
   const products =
     shopData?.data?.map((item) => ({
-      id: item._id,
+      id: item?._id,
       title: item.title,
       price: item.price,
       rating: item.rating,
       image: item.image,
-      category: item.category._id, // Map to category ID
+      category: item?.category?._id, // Map to category ID
     })) || [];
 
   // Filter products by price
   const filteredProducts = products.filter(
-    (product) => product.price <= priceFilter
+    (product) => product.price 
   );
 
   // Handle edit product
@@ -81,14 +77,7 @@ export default function ProductListing() {
     }
   };
 
-  // Confirm delete product
-
-  // Handle pagination change
-  const handlePaginationChange = (page, size) => {
-    setCurrentPage(page);
-    setPageSize(size);
-  };
-
+  
   // Custom styles
   const customStyles = {
     primaryColor: "#E64A19",
@@ -116,14 +105,7 @@ export default function ProductListing() {
         <Title level={3} style={{ margin: 0 }}>
           Product Listing
         </Title>
-        <Link
-          // to={"/add-item"}
-          //  to={`//add-item?${shopData?.data?.}`}
-          className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 py-2 flex items-center transition-colors duration-200"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Item
-        </Link>
+       
       </div>
 
       {/* Categories and Products */}
@@ -134,7 +116,7 @@ export default function ProductListing() {
       ) : (
         categories.map((category) => {
           const categoryProducts = filteredProducts.filter(
-            (product) => product.category === category.id
+            (product) => product.category === category?.id
           );
 
           if (categoryProducts.length === 0) return null;
@@ -247,70 +229,21 @@ export default function ProductListing() {
                   </Card>
                 ))}
               </div>
+              <Link
+                // to={"/add-item"}
+                 to={`/add-item/${category.id}`}
+                className="bg-orange-500 w-1/6 mt-5 text-center mx-auto hover:bg-orange-600 text-white rounded-full px-6 py-2 flex items-center transition-colors duration-200"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Item
+              </Link>
             </div>
           );
         })
       )}
 
-      {/* Pagination */}
-      <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "32px" }}
-      >
-        <Pagination
-          current={currentPage}
-          onChange={handlePaginationChange}
-          total={shopData?.totalData || products.length} // Use totalData from API if available
-          pageSize={pageSize}
-          showSizeChanger
-          pageSizeOptions={["10", "20", "50"]}
-          itemRender={(page, type, originalElement) => {
-            if (type === "prev") {
-              return (
-                <Button
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: customStyles.primaryColor,
-                    borderColor: "#d9d9d9",
-                  }}
-                >
-                  <LeftOutlined /> Previous
-                </Button>
-              );
-            }
-            if (type === "next") {
-              return (
-                <Button
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: customStyles.primaryColor,
-                    borderColor: "#d9d9d9",
-                  }}
-                >
-                  Next <RightOutlined />
-                </Button>
-              );
-            }
-            if (page === currentPage) {
-              return (
-                <Button
-                  style={{
-                    backgroundColor: customStyles.primaryColor,
-                    color: "white",
-                    borderColor: customStyles.primaryColor,
-                  }}
-                >
-                  {page}
-                </Button>
-              );
-            }
-            return originalElement;
-          }}
-        />
-      </div>
+      
 
-      {/* Delete Confirmation Modal */}
     </div>
   );
 }

@@ -158,6 +158,9 @@ export default function EditItem() {
           >
             <option value="">-- Select Category --</option>
             <option value="6818974edd667f640c378576">Top Sales</option>
+            <option value="6818974edd667f640c378577">Top Deals</option>
+            <option value="6818974edd667f640c378577">Drinks</option>
+            
             {/* You can map more categories here */}
           </select>
         </div>

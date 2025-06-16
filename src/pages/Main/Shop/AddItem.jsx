@@ -1,16 +1,18 @@
 import { useState, useRef } from "react";
 import { ArrowLeft, Image, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useShopsPostMutation } from "../../../redux/feature/shopSlice";
 
 export default function AddItem() {
   const navigate = useNavigate();
+  const {id} = useParams();
+  console.log(id, 'id')
   const [shopsPost] = useShopsPostMutation();
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
-    category: "",
+    category: id,
     rating: "",
     link: "",
   });
@@ -62,42 +64,76 @@ export default function AddItem() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError(null);
 
-    // Validate form data
-    if (!formData.title || !formData.price || !formData.category || !formData.rating || !formData.link) {
-      setError("Please fill out all fields");
-      return;
-    }
+  //   // Validate form data
+  //   if (!formData.title || !formData.price || !formData.category || !formData.rating || !formData.link) {
+  //     setError("Please fill out all fields");
+  //     return;
+  //   }
 
-    if (!imageFile) {
-      setError("Please upload an image");
-      return;
-    }
+  //   if (!imageFile) {
+  //     setError("Please upload an image");
+  //     return;
+  //   }
 
-    // Create FormData object
-    const formDataToSend = new FormData();
-    formDataToSend.append("data", JSON.stringify({
-      title: formData.title,
-      price: parseFloat(formData.price),
-      category: formData.category,
-      rating: parseFloat(formData.rating),
-      link: formData.link,
-    }));
-    formDataToSend.append("image", imageFile);
+  //   // Create FormData object
+  //   const formDataToSend = new FormData();
+  //   formDataToSend.append("data", JSON.stringify({
+  //     title: formData.title,
+  //     price: parseFloat(formData.price),
+  //     category: formData.id,
+  //     rating: parseFloat(formData.rating),
+  //     link: formData.link,
+  //   }));
+  //   formDataToSend.append("image", imageFile);
 
-    try {
-      const res = await shopsPost(formDataToSend).unwrap(); // Use unwrap to handle RTK Query response
-      console.log("API Response:", res);
-      // navigate("/shop"); // Navigate back to shop page on success
-    } catch (err) {
-      console.error("Error posting item:", err);
-      setError("Failed to add item. Please try again.");
-    }
-  };
+  //   try {
+  //     const res = await shopsPost(formDataToSend, id).unwrap(); // Use unwrap to handle RTK Query response
+  //     console.log("API Response:", res);
+  //     // navigate("/shop"); // Navigate back to shop page on success
+  //   } catch (err) {
+  //     console.error("Error posting item:", err);
+  //     setError("Failed to add item. Please try again.");
+  //   }
+  // };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
 
+  // Validate form data
+  if (!formData.title || !formData.price || !formData.rating || !formData.link) {
+    setError("Please fill out all fields");
+    return;
+  }
+
+  if (!imageFile) {
+    setError("Please upload an image");
+    return;
+  }
+
+  // Create FormData object
+  const formDataToSend = new FormData();
+  formDataToSend.append("data", JSON.stringify({
+    title: formData.title,
+    price: parseFloat(formData.price),
+    category: id, // Use the id from params directly
+    rating: parseFloat(formData.rating),
+    link: formData.link,
+  }));
+  formDataToSend.append("image", imageFile);
+
+  try {
+    const res = await shopsPost(formDataToSend).unwrap();
+    console.log("API Response:", res);
+    navigate("/shop"); // Uncomment this when ready
+  } catch (err) {
+    console.error("Error posting item:", err);
+    setError(err.data?.message || "Failed to add item. Please try again.");
+  }
+};
   return (
     <div className="rounded-lg bg-white">
       {/* Header */}
@@ -164,7 +200,7 @@ export default function AddItem() {
             </div>
 
             {/* Category */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">Category</label>
               <select
                 name="category"
@@ -179,7 +215,7 @@ export default function AddItem() {
                 <option value="drinks">Drinks</option>
                 <option value="shortlist">Shortlist</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Title */}
             <div>

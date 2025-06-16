@@ -48,7 +48,7 @@ export const dashboardItems = [
     element: <Shop />,
   },
   {
-    path: "add-item",
+    path: "add-item/:id",
     element: <AddItem />,
   },
   {
