@@ -55,7 +55,7 @@ export const dashboardItems = [
     path:'shop/:id',
     element:<EditItem></EditItem>,
     loader: ({ params }) =>
-			fetch(`http://192.168.10.233:3011/api/v1/shop/product-details/${params.id}`),
+			fetch(`https://api.usedistraction.com/api/v1/shop/product-details/${params.id}`),
   },
 
   {
