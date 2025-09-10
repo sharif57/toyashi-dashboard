@@ -181,15 +181,7 @@ export default function SignIn() {
             </button>
           </form>
 
-          <div className="text-center mt-4 text-sm text-gray-600">
-            Don’t have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-orange-500 hover:text-orange-600 font-medium"
-            >
-              Sign Up
-            </Link>
-          </div>
+        
         </div>
       </div>
     </div>
