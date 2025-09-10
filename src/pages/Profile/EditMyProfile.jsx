@@ -81,9 +81,9 @@ const EditMyProfile = () => {
             />
             <label
               htmlFor="image-upload"
-              className="absolute bottom-2 right-2 bg-blue-600 text-white rounded-full p-2 cursor-pointer hover:bg-blue-700"
+              className="absolute left-4 text-white rounded-full p-2 cursor-pointer "
             >
-              <PiCameraPlus />
+              {/* <PiCameraPlus /> */}
               <input
                 id="image-upload"
                 type="file"
