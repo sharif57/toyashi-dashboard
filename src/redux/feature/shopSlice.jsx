@@ -38,7 +38,24 @@ export const shopApi = baseApi.injectEndpoints({
         url:`/shop/delete-product/${id}`,
         method:"DELETE",
       })
-    })
+    }),
+
+    allCategories: builder.query({
+      query: () => ({
+        url: "/shop-category/all-shop-category",
+        method: "GET",
+      }),
+      providesTags: ["Shop"],
+    }),
+
+    createCategory: builder.mutation({
+      query: (data) => ({
+        url: "/shop-category/create-shop-category",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Shop"],
+    }),
 
 
     
@@ -50,5 +67,7 @@ export const {
     useShopsPostMutation,
     useShopUpdateMutation,
     useSingleProductQuery,
-    useDeleteProductsMutation
+    useDeleteProductsMutation,
+    useAllCategoriesQuery, 
+    useCreateCategoryMutation
 } = shopApi;

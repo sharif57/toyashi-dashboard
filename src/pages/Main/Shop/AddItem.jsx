@@ -64,41 +64,7 @@ export default function AddItem() {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError(null);
 
-  //   // Validate form data
-  //   if (!formData.title || !formData.price || !formData.category || !formData.rating || !formData.link) {
-  //     setError("Please fill out all fields");
-  //     return;
-  //   }
-
-  //   if (!imageFile) {
-  //     setError("Please upload an image");
-  //     return;
-  //   }
-
-  //   // Create FormData object
-  //   const formDataToSend = new FormData();
-  //   formDataToSend.append("data", JSON.stringify({
-  //     title: formData.title,
-  //     price: parseFloat(formData.price),
-  //     category: formData.id,
-  //     rating: parseFloat(formData.rating),
-  //     link: formData.link,
-  //   }));
-  //   formDataToSend.append("image", imageFile);
-
-  //   try {
-  //     const res = await shopsPost(formDataToSend, id).unwrap(); // Use unwrap to handle RTK Query response
-  //     console.log("API Response:", res);
-  //     // navigate("/shop"); // Navigate back to shop page on success
-  //   } catch (err) {
-  //     console.error("Error posting item:", err);
-  //     setError("Failed to add item. Please try again.");
-  //   }
-  // };
 const handleSubmit = async (e) => {
   e.preventDefault();
   setError(null);

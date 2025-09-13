@@ -27,6 +27,7 @@ import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import Notifications from "../pages/Main/Notifications/Notifications";
 import HostRequest from "../pages/Main/HostRequest/HostRequest";
 import EditItem from "../pages/Main/Shop/EditItem";
+import AddCategory from "../pages/Main/Shop/AddCategory";
 
 export const dashboardItems = [
   {
@@ -50,6 +51,10 @@ export const dashboardItems = [
   {
     path: "add-item/:id",
     element: <AddItem />,
+  },
+  {
+    path: 'shop/add-category',
+    element:<AddCategory></AddCategory>,
   },
   {
     path:'shop/:id',

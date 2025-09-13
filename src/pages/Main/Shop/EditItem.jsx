@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import {  useNavigate, useParams } from "react-router-dom";
 import {
+  useAllCategoriesQuery,
   useShopUpdateMutation,
   useSingleProductQuery,
 } from "../../../redux/feature/shopSlice";
@@ -22,6 +23,7 @@ export default function EditItem() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+    const { data } = useAllCategoriesQuery();
 
   const IMAGE = import.meta.env.VITE_IMAGE_API;
 
@@ -156,10 +158,15 @@ export default function EditItem() {
             onChange={handleInputChange}
             required
           >
-            <option value="">-- Select Category --</option>
-            <option value="6818974edd667f640c378576">Top Sales</option>
-            <option value="6818974edd667f640c378577">Top Deals</option>
-            <option value="6818974edd667f640c378577">Drinks</option>
+            {/* <option value=""></option> */}
+            {
+              data?.data?.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.categoryName}
+                </option>
+              ))
+            }
+          
             
             {/* You can map more categories here */}
           </select>

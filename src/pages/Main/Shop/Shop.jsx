@@ -93,22 +93,18 @@ export default function ProductListing() {
         padding: "16px 24px",
       }}
     >
-      {/* Header with Add New Item button */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-        }}
-      >
-        <Title level={3} style={{ margin: 0 }}>
-          Product Listing
-        </Title>
-       
-      </div>
+    
+ <div className="flex justify-end items-end">
+  <Link
+    to={`/shop/add-category`}
+    className="bg-orange-500 w-1/6 mt-5 text-center hover:bg-orange-600 text-white rounded-full px-6 py-2 flex items-center justify-center transition-colors duration-200"
+  >
+    <Plus className="w-4 h-4 mr-2" />
+    Add New Item
+  </Link>
+</div>
 
-      {/* Categories and Products */}
+
       {isLoading ? (
         <Text>Loading...</Text>
       ) : categories.length === 0 ? (
@@ -229,14 +225,14 @@ export default function ProductListing() {
                   </Card>
                 ))}
               </div>
-              <Link
+              {/* <Link
                 // to={"/add-item"}
                  to={`/add-item/${category.id}`}
                 className="bg-orange-500 w-1/6 mt-5 text-center mx-auto hover:bg-orange-600 text-white rounded-full px-6 py-2 flex items-center transition-colors duration-200"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New Item
-              </Link>
+              </Link> */}
             </div>
           );
         })
