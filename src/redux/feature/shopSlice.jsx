@@ -57,6 +57,44 @@ export const shopApi = baseApi.injectEndpoints({
       invalidatesTags: ["Shop"],
     }),
 
+    // Payouts
+    // /party/all?page&limit
+    allPayouts: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/party/all?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Payout"],
+    }),
+
+    // patch : /update-income/:id
+    updatePayout: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/party/update-income/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Payout"],
+    }),
+
+    // /leave-record
+    getAllLeaveRecord: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/leave-record?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Payout"],
+    }),
+
+    // patch: leave-record/update-status/:id
+    updateLeaveRecordStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/leave-record/update-status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Payout"],
+    }),
 
     
   }),
@@ -69,5 +107,9 @@ export const {
     useSingleProductQuery,
     useDeleteProductsMutation,
     useAllCategoriesQuery, 
-    useCreateCategoryMutation
+    useCreateCategoryMutation,
+    useAllPayoutsQuery,
+    useUpdatePayoutMutation,
+    useGetAllLeaveRecordQuery,
+    useUpdateLeaveRecordStatusMutation,
 } = shopApi;

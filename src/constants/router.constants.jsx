@@ -28,6 +28,8 @@ import Notifications from "../pages/Main/Notifications/Notifications";
 import HostRequest from "../pages/Main/HostRequest/HostRequest";
 import EditItem from "../pages/Main/Shop/EditItem";
 import AddCategory from "../pages/Main/Shop/AddCategory";
+import Payouts from "../pages/Main/Payouts";
+import LeaveRecord from "../pages/Main/LeaveRecord";
 
 export const dashboardItems = [
   {
@@ -78,6 +80,18 @@ export const dashboardItems = [
   {
     path: "notifications",
     element: <Notifications />,
+  },
+  {
+    name: "Payouts",
+    path: "payouts",
+    icon: ShoppingBag,
+    element: <Payouts />,
+  },
+  {
+    name: "Leave Record",
+    path: "leave-record",
+    icon: MdOutlineSecurityUpdateWarning,
+    element: <LeaveRecord />,
   },
 
   {
