@@ -24,6 +24,13 @@ export default function Payouts() {
         index: (currentPage - 1) * pageSize + idx + 1,
         hostName: p.userId?.name || p.userId?.email || "Unknown",
         partyName: p.partyName || "-",
+        partyDate: p.partyDate
+          ? new Date(p.partyDate).toLocaleDateString("en-US", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+          : "-",
         ticketsSold: p.soldTicket ?? 0,
         payableAmount: p.income ?? 0,
         payoutMethod: p.payoutOption || (p.paypalAccount ? "PAYPAL" : "STRIPE") || "-",
@@ -63,6 +70,12 @@ export default function Payouts() {
       title: "Party Name",
       dataIndex: "partyName",
       key: "partyName",
+    },
+    {
+      title: "Party Date",
+      dataIndex: "partyDate",
+      key: "partyDate",
+      align: "center",
     },
     {
       title: "Tickets Sold",

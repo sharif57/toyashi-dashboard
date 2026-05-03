@@ -4,11 +4,14 @@ import {
   useGetAllLeaveRecordQuery,
   useUpdateLeaveRecordStatusMutation,
 } from "../../redux/feature/shopSlice";
+import DashboardModal from "../../Components/DashboardModal";
 
 export default function LeaveRecord() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [localStatus, setLocalStatus] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({});
 
   const { data, isLoading } = useGetAllLeaveRecordQuery({ page: currentPage, limit: pageSize });
   const [updateLeaveRecordStatus, { isLoading: updateLoading }] =
@@ -25,6 +28,8 @@ export default function LeaveRecord() {
         index: (currentPage - 1) * pageSize + idx + 1,
         customerName: record.paymentId?.userId?.name || "Unknown",
         customerEmail: record.paymentId?.userId?.email || "-",
+        customerPaypal: record.paymentId?.userId?.paypalAccount || "-",
+        customerStripe: record.paymentId?.userId?.stripeAccount || "-",
         hostName: record.paymentId?.partyId?.host?.name || "-",
         hostEmail: record.paymentId?.partyId?.host?.email || "-",
         refundAmount: record.refundAmount ?? 0,
@@ -58,6 +63,11 @@ export default function LeaveRecord() {
       message.error("Failed to update status. Please try again.");
       console.error("Failed to update leave record status", err);
     }
+  };
+
+  const showModal = (record) => {
+    setModalData(record.raw || record);
+    setIsModalOpen(true);
   };
 
   const columns = [
@@ -150,6 +160,21 @@ export default function LeaveRecord() {
         );
       },
     },
+    {
+      title: "Action",
+      key: "action",
+      align: "center",
+      render: (_, row) => (
+        <div className="flex items-center justify-center">
+          <button
+            onClick={() => showModal(row)}
+            className="bg-[#E7533A] text-white px-3 py-1 rounded-md text-sm"
+          >
+            View
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -175,6 +200,45 @@ export default function LeaveRecord() {
         }}
         loading={isLoading}
       />
+      <DashboardModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        maxWidth="600px"
+      >
+        <div>
+          <h2 className="text-lg text-center mb-4">Refund Details</h2>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Customer</p>
+            <p>{modalData.paymentId?.userId?.name || "-"} — {modalData.paymentId?.userId?.email || "-"}</p>
+            <p className="text-sm text-gray-500">PayPal: {modalData.paymentId?.userId?.paypalAccount || "-"}</p>
+            <p className="text-sm text-gray-500">Stripe: {modalData.paymentId?.userId?.stripeAccount || "-"}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Host</p>
+            <p>{modalData.paymentId?.partyId?.host?.name || "-"} — {modalData.paymentId?.partyId?.host?.email || "-"}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Transaction</p>
+            <p>{modalData.paymentId?.transactionId || "-"}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Payment Method</p>
+            <p>{modalData.paymentId?.paymentMethod || "-"}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Refund Amount</p>
+            <p>£{Number(modalData.refundAmount || 0).toLocaleString()}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Status</p>
+            <p>{modalData.refundStatus || "-"}</p>
+          </div>
+          <div className="mb-2 text-gray-600">
+            <p className="font-medium">Created At</p>
+            <p>{modalData.createdAt ? new Date(modalData.createdAt).toLocaleString() : "-"}</p>
+          </div>
+        </div>
+      </DashboardModal>
     </div>
   );
 }
