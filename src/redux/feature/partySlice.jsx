@@ -3,11 +3,19 @@ import baseApi from "../Api/baseApi";
 export const partyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     allParty: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
-        url: `/party/all-parties?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10, status }) => ({
+        url: `/party/all-parties?page=${page}&limit=${limit}&status=${status}`,
         method: "GET",
       }),
       providesTags: ["User"],
+    }),
+
+    deleteParty: builder.mutation({
+      query: (id) => ({
+        url: `/party/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
     }),
     
     upComingParty:builder.query({
@@ -28,4 +36,4 @@ export const partyApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useAllPartyQuery, useUpComingPartyQuery, usePastPartyQuery } = partyApi;
+export const { useAllPartyQuery, useDeletePartyMutation, useUpComingPartyQuery, usePastPartyQuery } = partyApi;
